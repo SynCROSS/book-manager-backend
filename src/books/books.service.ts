@@ -1,12 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { config } from 'dotenv';
 import { Repository } from 'typeorm';
 import { Book } from '../entity/book.entity';
 import { BookDTO } from '../dto/book.dto';
-
-config();
-
 @Injectable()
 export class BooksService {
   constructor(
