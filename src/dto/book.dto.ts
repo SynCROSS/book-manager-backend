@@ -1,4 +1,5 @@
 export class BookDTO {
+  book_id!: number;
   title!: string;
   author_lf!: string;
   author_fl!: string;
