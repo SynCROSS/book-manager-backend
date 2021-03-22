@@ -1,19 +1,18 @@
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
 export class Book {
-  @PrimaryGeneratedColumn('increment')
+  @PrimaryColumn()
   book_id!: number;
 
   @Column({
     type: 'text',
-    // length: 42000,
   })
   title!: string;
 
@@ -30,9 +29,9 @@ export class Book {
   author_fl!: string;
 
   @Column({
-    type: 'int',
+    type: 'bigint',
   })
-  ISBN!: number;
+  ISBN?: number;
 
   @Column({
     type: 'float',
@@ -68,9 +67,9 @@ export class Book {
   cover!: string;
 
   @Column({
-    type: 'timestamp',
+    type: 'int',
   })
-  entry_stamp!: Date;
+  entry_stamp?: number;
 
   @CreateDateColumn()
   createdAt!: Date;

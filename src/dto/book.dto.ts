@@ -9,5 +9,5 @@ export class BookDTO {
   language_secondary?: string;
   language_original?: string;
   cover!: string;
-  entry_stamp!: Date;
+  entry_stamp!: number;
 }
