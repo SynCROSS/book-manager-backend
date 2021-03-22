@@ -1,5 +1,6 @@
+import { IsString, IsOptional } from 'class-validator';
 export class UserDTO {
-  user_name!: string;
-  nickname!: string;
-  password?: string;
+  @IsString() user_name!: string;
+  @IsString() nickname!: string;
+  @IsOptional() @IsString() password?: string;
 }
