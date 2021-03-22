@@ -1,9 +1,11 @@
+import { User } from './user.entity';
 import {
   Entity,
   Column,
   PrimaryColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from 'typeorm';
 
 @Entity()
@@ -70,6 +72,9 @@ export class Book {
     type: 'int',
   })
   entry_stamp?: number;
+
+  @ManyToOne(type => User, user => user.borrowedBooks)
+  borrower: User;
 
   @CreateDateColumn()
   createdAt!: Date;
