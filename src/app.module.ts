@@ -6,7 +6,6 @@ import { BooksModule } from './books/books.module';
 import { Book } from './entity/book.entity';
 import { UsersModule } from './users/users.module';
 import { User } from './entity/user.entity';
-import { Password } from './entity/password.entity';
 
 @Module({
   imports: [
@@ -17,7 +16,7 @@ import { Password } from './entity/password.entity';
       username: 'root',
       password: 'mathmech',
       database: 'book_manager_app',
-      entities: [Book, User, Password],
+      entities: [Book, User],
       synchronize: true,
     }),
     BooksModule,

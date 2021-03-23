@@ -4,13 +4,11 @@ import { User } from 'src/entity/user.entity';
 import { Repository } from 'typeorm';
 import { UserDTO } from '../dto/user.dto';
 import { hashSync } from 'bcrypt';
-import { Password } from 'src/entity/password.entity';
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User) private readonly userRepository: Repository<User>,
-    @InjectRepository(Password)
-    private readonly passwordRepository: Repository<Password>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async addUser(userDTO: UserDTO): Promise<User> {
@@ -20,13 +18,6 @@ export class UsersService {
       ...userDTO,
       password: hash,
     });
-
-    const hashedPassword = this.passwordRepository.create({
-      hash,
-      owner: user,
-    });
-
-    await this.passwordRepository.save(hashedPassword);
 
     return await this.userRepository.save(user);
   }
