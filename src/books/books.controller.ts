@@ -32,7 +32,7 @@ export class BooksController {
   }
 
   @Post('add')
-  addBook(@Body() bookDTO: BookDTO): Promise<Book> {
+  addBook(@Body() bookDTO: BookDTO) {
     return this.booksService.addBook(bookDTO);
   }
 
