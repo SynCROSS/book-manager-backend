@@ -25,12 +25,17 @@ export class BooksService {
   }
 
   async getBookById(id: number): Promise<boolean | Book> {
-    const book =
-      (await this.bookRepository.findOne({
-        book_id: id,
-      })) ?? false;
+    const book = (await this.bookRepository.findOne(id)) ?? false;
 
     return book;
+  }
+
+  async isThereAnyBooks(id: number): Promise<boolean> {
+    const book = await this.getBookById(id);
+
+    if (!book) {
+      return false;
+    }
   }
 
   async addBook(bookDTO: BookDTO) {
@@ -41,36 +46,23 @@ export class BooksService {
     return await this.bookRepository.save(book);
   }
 
-  async updateBookById(
-    id: number,
-    bookDTO: Partial<BookDTO>,
-  ): Promise<boolean | Book> {
-    const book = await this.getBookById(id);
-
-    if (!book) {
-      return book;
+  async updateBookById(id: number, bookDTO: Partial<BookDTO>): Promise<Book> {
+    if (!this.isThereAnyBooks(id)) {
+      return null;
     }
 
     await this.bookRepository.update(id, bookDTO);
 
-    return await this.bookRepository.findOne({
-      book_id: id,
-    });
+    return await this.bookRepository.findOne(id);
   }
 
   async deleteBookById(id: number): Promise<boolean> {
-    const book = await this.getBookById(id);
-
-    if (!book) {
+    if (!this.isThereAnyBooks(id)) {
       return false;
     }
 
-    await this.bookRepository.softDelete({
-      book_id: id,
-    });
-    await this.bookRepository.restore({
-      book_id: id,
-    });
+    await this.bookRepository.softDelete(id);
+    await this.bookRepository.restore(id);
 
     return true;
   }
