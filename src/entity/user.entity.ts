@@ -1,4 +1,5 @@
 import { Book } from './book.entity';
+import { Permission } from './permission.entity';
 import {
   Entity,
   Column,
@@ -7,12 +8,14 @@ import {
   UpdateDateColumn,
   OneToMany,
   DeleteDateColumn,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('increment')
-  user_id: number;
+  id: number;
 
   @Column({
     type: 'varchar',
@@ -32,7 +35,11 @@ export class User {
   })
   password: string;
 
-  @OneToMany(type => Book, book => book.borrower)
+  @OneToOne(() => Permission)
+  @JoinColumn()
+  permission: Permission;
+
+  @OneToMany(() => Book, book => book.borrower)
   borrowedBooks: Book[];
 
   @CreateDateColumn()
