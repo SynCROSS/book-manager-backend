@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Like, Repository } from 'typeorm';
 import { Book } from '../entity/book.entity';
 import { BookDTO } from '../dto/book.dto';
+import { User } from 'src/entity/user.entity';
 @Injectable()
 export class BooksService {
   constructor(
@@ -24,8 +25,8 @@ export class BooksService {
     return books;
   }
 
-  async getBookById(id: number): Promise<boolean | Book> {
-    const book = (await this.bookRepository.findOne(id)) ?? false;
+  async getBookById(id: number): Promise<Book> {
+    const book = await this.bookRepository.findOne(id);
 
     return book;
   }
@@ -54,6 +55,25 @@ export class BooksService {
     await this.bookRepository.update(id, bookDTO);
 
     return await this.bookRepository.findOne(id);
+  }
+
+  async checkOutBook(id: number) {
+    if (!this.isThereAnyBooks(id)) {
+      return null;
+    }
+
+    // const user = await userRepository.findOne()
+    // const book = await this.getBookById(id)
+    // user.borrowedBooks = [...user.borrowedBooks,book]
+  }
+  async checkInBook(id: number) {
+    if (!this.isThereAnyBooks(id)) {
+      return null;
+    }
+
+    // const user = await userRepository.findOne()
+    // const book = await this.getBookById(id)
+    // user.borrowedBooks = [...user.borrowedBooks,book]
   }
 
   async deleteBookById(id: number): Promise<boolean> {

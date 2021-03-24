@@ -36,6 +36,21 @@ export class BooksController {
     return this.booksService.addBook(bookDTO);
   }
 
+  // @Patch('reserve/:id')
+  // reserveBook(@Param('id') id:number) {
+  //   return this.booksService.res;
+  // }
+
+  @Patch('check_out/:id')
+  checkOutBook(@Param('id') id: number) {
+    return this.booksService.checkOutBook(id);
+  }
+
+  @Patch('check_in/:id')
+  checkInBook(@Param('id') id: number) {
+    return this.booksService.checkInBook(id);
+  }
+
   @Patch('update/:id')
   updateBookById(@Param('id') id: number, @Body() bookDTO: Partial<BookDTO>) {
     return this.booksService.updateBookById(id, bookDTO);
