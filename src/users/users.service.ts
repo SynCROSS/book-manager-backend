@@ -21,4 +21,8 @@ export class UsersService {
 
     return await this.userRepository.save(user);
   }
+
+  async getProfileById(id: number) {
+    return await this.userRepository.findOne(id);
+  }
 }
