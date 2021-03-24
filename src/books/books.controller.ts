@@ -31,12 +31,12 @@ export class BooksController {
     return this.booksService.getBookById(id);
   }
 
-  @Post()
+  @Post('add')
   addBook(@Body() bookDTO: BookDTO): Promise<Book> {
     return this.booksService.addBook(bookDTO);
   }
 
-  @Patch(':id')
+  @Patch('update/:id')
   updateBookById(@Param('id') id: number, @Body() bookDTO: Partial<BookDTO>) {
     return this.booksService.updateBookById(id, bookDTO);
   }
