@@ -6,6 +6,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  DeleteDateColumn,
 } from 'typeorm';
 
 @Entity()
@@ -27,7 +28,7 @@ export class User {
 
   @Column({
     type: 'varchar',
-    length: 20,
+    length: 60,
   })
   password: string;
 
@@ -39,4 +40,7 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt!: Date;
 }
