@@ -74,7 +74,7 @@ export class Book {
   })
   entry_stamp?: number;
 
-  @ManyToOne(type => User, user => user.borrowedBooks)
+  @ManyToOne(() => User, user => user.borrowedBooks)
   borrower: User;
 
   @CreateDateColumn()
