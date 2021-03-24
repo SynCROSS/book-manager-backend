@@ -11,6 +11,12 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
+  async getUserById(id: number): Promise<boolean | User> {
+    const user = (await this.userRepository.findOne(id)) ?? false;
+
+    return user;
+  }
+
   async addUser(userDTO: UserDTO): Promise<User> {
     const hash = hashSync(userDTO.password, 10);
 
@@ -20,9 +26,5 @@ export class UsersService {
     });
 
     return await this.userRepository.save(user);
-  }
-
-  async getProfileById(id: number) {
-    return await this.userRepository.findOne(id);
   }
 }
