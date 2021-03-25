@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { compareSync } from 'bcrypt';
 import { User } from 'src/entity/user.entity';
 import { getRepository } from 'typeorm';
+import { LoginDTO } from '../dto/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -11,37 +12,26 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateUser(userData) {
-    const { username, password } = userData;
+  async validateUser(loginDTO: LoginDTO) {
+    const { username, password } = loginDTO;
 
-    console.log(userData);
-
-    const user = await getRepository(User).findOne({
-      where: {
-        username,
-      },
+    const user = await getRepository(User).findOneOrFail({
+      username: username,
     });
 
-    if (user?.user_name && compareSync(password, user.password)) {
+    if (user?.username && compareSync(password, user.password)) {
       return true;
     }
     return false;
   }
 
-  async loginUser(userData: { username: string; password: string }) {
-    const user = await getRepository(User).findOneOrFail({
-      user_name: userData.username,
-    });
-
-    if (compareSync(userData.password, user.password)) {
-      return {
-        access_token: this.jwtService.sign({
-          id: user.id,
-          user_name: user.user_name,
-        }),
-      };
-    }
-    return null;
+  async loginUser(loginDTO: LoginDTO) {
+    return {
+      access_token: this.jwtService.sign({
+        username: loginDTO?.username,
+        password: loginDTO?.password,
+      }),
+    };
   }
 
   // * loginCheck
