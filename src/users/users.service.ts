@@ -17,6 +17,15 @@ export class UsersService {
     return user;
   }
 
+  async getUserByUsername(username: string): Promise<boolean | User> {
+    const user =
+      (await this.userRepository.findOne({
+        username,
+      })) ?? false;
+
+    return user;
+  }
+
   async addUser(userDTO: UserDTO): Promise<User> {
     const hash = hashSync(userDTO.password, 10);
 

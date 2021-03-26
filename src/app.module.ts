@@ -8,7 +8,8 @@ import { UsersModule } from './users/users.module';
 import { User } from './entity/user.entity';
 import { Permission } from './entity/permission.entity';
 import { AuthModule } from './auth/auth.module';
-
+import { ConfigModule } from '@nestjs/config';
+import { object, string } from 'joi';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -20,6 +21,12 @@ import { AuthModule } from './auth/auth.module';
       database: 'book_manager_app',
       entities: [Book, User, Permission],
       synchronize: true,
+    }),
+    ConfigModule.forRoot({
+      validationSchema: object({
+        JWT_SECRET: string().required(),
+        JWT_EXPIRATION_TIME: string().required(),
+      }),
     }),
     BooksModule,
     UsersModule,
