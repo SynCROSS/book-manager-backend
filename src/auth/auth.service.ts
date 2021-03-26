@@ -6,6 +6,7 @@ import { User } from 'src/entity/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { getRepository } from 'typeorm';
 import { LoginDTO } from '../dto/login.dto';
+import { Request, Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -39,7 +40,20 @@ export class AuthService {
     )}`;
   }
 
-  // * loginCheck
+  getUser(req: Request) {
+    req.body.password = undefined;
+    return req.body;
+  }
 
-  // * logout
+  async login(req: Request, res: Response) {
+    const cookie = await this.loginUser(req.body);
+
+    res.setHeader('Set-Cookie', cookie);
+    return res.send(req.body);
+  }
+
+  logout(res: Response) {
+    res.setHeader('Set-Cookie', `Authentication=; HttpOnly; Path=/; Max-Age=0`);
+    return res.sendStatus(200);
+  }
 }

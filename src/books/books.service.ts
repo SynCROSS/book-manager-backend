@@ -4,13 +4,52 @@ import { Like, Repository } from 'typeorm';
 import { Book } from '../entity/book.entity';
 import { BookDTO } from '../dto/book.dto';
 import { User } from 'src/entity/user.entity';
+import axios from 'axios';
 @Injectable()
 export class BooksService {
   constructor(
     @InjectRepository(Book) private readonly bookRepository: Repository<Book>,
   ) {}
 
-  async getBooks(numberOfBooks: number): Promise<Book[]> {
+  async getBookData() {
+    const BASE_URL =
+      'http://www.librarything.com/api_getdata.php?userid=timspalding&responseType=json';
+    try {
+      const {
+        data: { books },
+      } = await axios.get(BASE_URL);
+
+      for (const book in books) {
+        const b = books[book];
+
+        const newBook: BookDTO = {
+          book_id: +b.book_id,
+          title: b.title,
+          author_lf: b.author_lf ?? '',
+          author_fl: b.author_fl ?? '',
+          ISBN: isNaN(+b.ISBN) ? 0 : +b.ISBN,
+          rating: isNaN(+b.rating) ? 0 : +b.rating,
+          language_main: b.language_main ?? '',
+          language_secondary: b.language_secondary ?? '',
+          language_original: b.language_original ?? '',
+          cover: b.cover,
+          entry_stamp: +b.entry_stamp,
+        };
+
+        await this.bookRepository.save(
+          this.bookRepository.create({
+            ...newBook,
+          }),
+        );
+      }
+      return true;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  }
+
+  async getAllBooks(numberOfBooks: number): Promise<Book[]> {
     const books = await this.bookRepository.find({
       take: numberOfBooks,
     });
@@ -37,6 +76,7 @@ export class BooksService {
     if (!book) {
       return false;
     }
+    return true;
   }
 
   async addBook(bookDTO: BookDTO) {

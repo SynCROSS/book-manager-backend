@@ -17,8 +17,13 @@ export class BooksController {
   constructor(private readonly booksService: BooksService) {}
 
   @Get()
-  getBooks(@Query('limit') limit: number) {
-    return this.booksService.getBooks(limit);
+  getAllBooks(@Query('limit') limit: number) {
+    return this.booksService.getAllBooks(limit);
+  }
+
+  @Get('insert_book')
+  getBookData() {
+    return this.booksService.getBookData();
   }
 
   @Get('search')
@@ -35,11 +40,6 @@ export class BooksController {
   addBook(@Body() bookDTO: BookDTO) {
     return this.booksService.addBook(bookDTO);
   }
-
-  // @Patch('reserve/:id')
-  // reserveBook(@Param('id') id:number) {
-  //   return this.booksService.res;
-  // }
 
   @Patch('check_out/:id')
   checkOutBook(@Param('id') id: number) {
