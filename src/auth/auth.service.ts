@@ -40,12 +40,13 @@ export class AuthService {
   }
 
   getUser(req: Request) {
-    const { authorization } = req.headers;
-    if (!authorization) {
+    const { Authentication } = req.cookies;
+
+    if (!Authentication) {
       return response.sendStatus(400);
     }
 
-    const token = authorization.split(' ')[1];
+    const token = req.cookies['Authentication'].split(' ')[1];
     const secretKey = this.configService.get('JWT_SECRET');
 
     try {
@@ -61,17 +62,18 @@ export class AuthService {
   async login(req: Request, res: Response) {
     const token = await this.loginUser(req.body);
     req.body.password = undefined;
+
     res.setHeader('Authorization', token);
     res.cookie('Authentication', token, {
-      maxAge: this.configService.get('JWT_EXPIRATION_TIME'),
       httpOnly: true,
+      maxAge: this.configService.get('JWT_EXPIRATION_TIME'),
     });
 
-    return res.send(token);
+    return res.json(token);
   }
 
   logout(res: Response) {
-    res.removeHeader('Authorization');
+    res.clearCookie('Authentication');
     return res.sendStatus(200);
   }
 }
