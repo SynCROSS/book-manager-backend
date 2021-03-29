@@ -41,12 +41,12 @@ export class BooksController {
     return this.booksService.addBook(bookDTO);
   }
 
-  @Patch('check_out/:id')
+  @Patch('checkOut/:id')
   checkOutBook(@Param('id') id: number) {
     return this.booksService.checkOutBook(id);
   }
 
-  @Patch('check_in/:id')
+  @Patch('checkIn/:id')
   checkInBook(@Param('id') id: number) {
     return this.booksService.checkInBook(id);
   }
