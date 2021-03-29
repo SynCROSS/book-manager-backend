@@ -103,23 +103,37 @@ export class BooksService {
       return null;
     }
     const response = await axios.get('http://localhost/auth/check');
-    console.log(response);
+    const { username } = response.data;
 
-    const user = await getRepository(User).findOne(id);
-    // if (user.username === response) {
-
-    // }
-    // const book = await this.getBookById(id)
-    // user.borrowedBooks = [...user.borrowedBooks,book]
+    const user = await getRepository(User).findOne({
+      username,
+    });
+    if (user.username === username) {
+      const orderedBook = await this.bookRepository.findOne(id);
+      orderedBook.borrower = user;
+      return await this.bookRepository.save(orderedBook);
+    }
+    return null;
   }
   async checkInBook(id: number) {
     if (!this.isThereAnyBooks(id)) {
       return null;
     }
+    const response = await axios.get('http://localhost/auth/check');
+    const { username } = response.data;
 
-    // const user = await userRepository.findOne()
-    // const book = await this.getBookById(id)
-    // user.borrowedBooks = [...user.borrowedBooks,book]
+    const user = await getRepository(User).findOne({
+      username,
+    });
+    if (user.username === username) {
+      const orderedBook = await this.bookRepository.findOne(id);
+
+      if (orderedBook.borrower === user) {
+        orderedBook.borrower = null;
+      }
+      return await this.bookRepository.save(orderedBook);
+    }
+    return null;
   }
 
   async deleteBookById(id: number): Promise<boolean> {
