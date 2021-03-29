@@ -108,6 +108,7 @@ export class BooksService {
     const user = await getRepository(User).findOne({
       username,
     });
+
     if (user.username === username) {
       const orderedBook = await this.bookRepository.findOne(id);
       orderedBook.borrower = user;
@@ -115,6 +116,7 @@ export class BooksService {
     }
     return null;
   }
+
   async checkInBook(id: number) {
     if (!this.isThereAnyBooks(id)) {
       return null;
@@ -125,6 +127,7 @@ export class BooksService {
     const user = await getRepository(User).findOne({
       username,
     });
+
     if (user.username === username) {
       const orderedBook = await this.bookRepository.findOne(id);
 
