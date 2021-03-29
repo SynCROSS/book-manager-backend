@@ -10,7 +10,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('check')
   async getUser(@Req() req: Request) {
-    return await this.authService.getUser(req);
+    return this.authService.getUser(req);
   }
 
   @UseGuards(LocalAuthGuard)

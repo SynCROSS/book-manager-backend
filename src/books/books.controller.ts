@@ -21,7 +21,7 @@ export class BooksController {
     return this.booksService.getAllBooks(limit);
   }
 
-  @Get('insert_book')
+  @Get('insert')
   getBookData() {
     return this.booksService.getBookData();
   }

@@ -6,7 +6,8 @@ import { User } from 'src/entity/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { getRepository } from 'typeorm';
 import { LoginDTO } from '../dto/login.dto';
-import { Request, Response } from 'express';
+import { Request, response, Response } from 'express';
+import { verify } from 'jsonwebtoken';
 
 @Injectable()
 export class AuthService {
@@ -30,30 +31,47 @@ export class AuthService {
   }
 
   async loginUser(loginDTO: LoginDTO) {
-    const user = await this.usersService.getUserByUsername(loginDTO.username);
+    const user = await this.usersService.getUserByUsername(loginDTO?.username);
     if (!user) return null;
 
     const token = this.jwtService.sign(loginDTO);
 
-    return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get(
-      'JWT_EXPIRATION_TIME',
-    )}`;
+    return `Bearer ${token}`;
   }
 
   getUser(req: Request) {
-    req.body.password = undefined;
-    return req.body;
+    const { authorization } = req.headers;
+    if (!authorization) {
+      return response.sendStatus(400);
+    }
+
+    const token = authorization.split(' ')[1];
+    const secretKey = this.configService.get('JWT_SECRET');
+
+    try {
+      const decodedToken = verify(token, secretKey);
+      decodedToken['password'] = undefined;
+
+      return decodedToken;
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   async login(req: Request, res: Response) {
-    const cookie = await this.loginUser(req.body);
+    const token = await this.loginUser(req.body);
+    req.body.password = undefined;
+    res.setHeader('Authorization', token);
+    res.cookie('Authentication', token, {
+      maxAge: this.configService.get('JWT_EXPIRATION_TIME'),
+      httpOnly: true,
+    });
 
-    res.setHeader('Set-Cookie', cookie);
-    return res.send(req.body);
+    return res.send(token);
   }
 
   logout(res: Response) {
-    res.setHeader('Set-Cookie', `Authentication=; HttpOnly; Path=/; Max-Age=0`);
+    res.removeHeader('Authorization');
     return res.sendStatus(200);
   }
 }

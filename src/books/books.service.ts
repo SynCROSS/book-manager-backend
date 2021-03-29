@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like, Repository } from 'typeorm';
+import { Like, Repository, getRepository } from 'typeorm';
 import { Book } from '../entity/book.entity';
 import { BookDTO } from '../dto/book.dto';
 import { User } from 'src/entity/user.entity';
 import axios from 'axios';
+// import { AuthService } from '../auth/auth.service';
 @Injectable()
 export class BooksService {
   constructor(
-    @InjectRepository(Book) private readonly bookRepository: Repository<Book>,
+    @InjectRepository(Book) private readonly bookRepository: Repository<Book>, // private readonly authService: AuthService,
   ) {}
 
   async getBookData() {
@@ -101,8 +102,13 @@ export class BooksService {
     if (!this.isThereAnyBooks(id)) {
       return null;
     }
+    const response = await axios.get('http://localhost/auth/check');
+    console.log(response);
 
-    // const user = await userRepository.findOne()
+    const user = await getRepository(User).findOne(id);
+    // if (user.username === response) {
+
+    // }
     // const book = await this.getBookById(id)
     // user.borrowedBooks = [...user.borrowedBooks,book]
   }
