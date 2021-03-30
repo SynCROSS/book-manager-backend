@@ -10,7 +10,6 @@ import {
 } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { BookDTO } from '../dto/book.dto';
-import { Book } from 'src/entity/book.entity';
 
 @Controller('books')
 export class BooksController {
