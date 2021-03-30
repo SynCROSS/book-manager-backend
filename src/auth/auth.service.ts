@@ -40,13 +40,13 @@ export class AuthService {
   }
 
   getUser(req: Request) {
-    const { Authentication } = req.cookies;
+    const { authorization } = req.headers;
 
-    if (!Authentication) {
+    if (!authorization) {
       return response.sendStatus(400);
     }
 
-    const token = req.cookies['Authentication'].split(' ')[1];
+    const token = authorization.split(' ')[1];
     const secretKey = this.configService.get('JWT_SECRET');
 
     try {
