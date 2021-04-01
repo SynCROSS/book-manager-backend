@@ -54,6 +54,11 @@ export class BooksService {
     const books = await this.bookRepository.find({
       take: numberOfBooks,
     });
+    for (const book of books) {
+      book.createdAt = undefined;
+      book.updatedAt = undefined;
+      book.deletedAt = undefined;
+    }
     return books;
   }
 
