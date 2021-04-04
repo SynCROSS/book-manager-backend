@@ -32,6 +32,7 @@ export class AuthService {
 
   async loginUser(loginDTO: LoginDTO) {
     const user = await this.usersService.getUserByUsername(loginDTO?.username);
+
     if (!user) return null;
 
     const token = this.jwtService.sign(loginDTO);
