@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { BookDTO } from '../dto/book.dto';
+import { BorrowDTO } from '../dto/borrow.dto';
 
 @Controller('books')
 export class BooksController {
@@ -41,13 +42,13 @@ export class BooksController {
   }
 
   @Patch('checkOut/:id')
-  checkOutBook(@Param('id') id: number) {
-    return this.booksService.checkOutBook(id);
+  checkOutBook(@Param('id') id: number, @Body() borrowDTO: BorrowDTO) {
+    return this.booksService.checkOutBook(id, borrowDTO.username);
   }
 
   @Patch('checkIn/:id')
-  checkInBook(@Param('id') id: number) {
-    return this.booksService.checkInBook(id);
+  checkInBook(@Param('id') id: number, @Body() borrowDTO: BorrowDTO) {
+    return this.booksService.checkInBook(id, borrowDTO.username);
   }
 
   @Patch('update/:id')

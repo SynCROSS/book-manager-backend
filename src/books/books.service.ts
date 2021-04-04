@@ -72,17 +72,23 @@ export class BooksService {
 
   async getBookById(id: number): Promise<Book> {
     const book = await this.bookRepository.findOne(id);
-
+    book.createdAt = undefined;
+    book.updatedAt = undefined;
+    book.deletedAt = undefined;
     return book;
   }
 
-  async isThereAnyBooks(id: number): Promise<boolean> {
-    const book = await this.getBookById(id);
-
-    if (!book) {
-      return false;
+  async isThereAnyBooks(id: number) {
+    try {
+      return await this.getBookById(id).then(result => {
+        if (!(result ?? false)) {
+          return false;
+        }
+        return result;
+      });
+    } catch (e) {
+      console.error(e);
     }
-    return true;
   }
 
   async addBook(bookDTO: BookDTO) {
@@ -103,43 +109,50 @@ export class BooksService {
     return await this.bookRepository.findOne(id);
   }
 
-  async checkOutBook(id: number) {
-    if (!this.isThereAnyBooks(id)) {
+  async checkOutBook(id: number, username: string) {
+    try {
+      if (!this.isThereAnyBooks(id)) {
+        return null;
+      }
+
+      const user = await getRepository(User).findOne({
+        username,
+      });
+
+      if (user.username ?? false) {
+        const orderedBook = await this.bookRepository.findOne({
+          book_id: id,
+        });
+        orderedBook.borrower = user;
+        await this.bookRepository.save(orderedBook);
+        return orderedBook.borrower.username;
+      }
       return null;
+    } catch (e) {
+      console.error(e);
     }
-    const response = await axios.get('http://localhost/auth/check');
-    const { username } = response.data;
-
-    const user = await getRepository(User).findOne({
-      username,
-    });
-
-    if (user.username === username) {
-      const orderedBook = await this.bookRepository.findOne(id);
-      orderedBook.borrower = user;
-      return await this.bookRepository.save(orderedBook);
-    }
-    return null;
   }
 
-  async checkInBook(id: number) {
+  async checkInBook(id: number, username: string) {
     if (!this.isThereAnyBooks(id)) {
       return null;
     }
-    const response = await axios.get('http://localhost/auth/check');
-    const { username } = response.data;
 
     const user = await getRepository(User).findOne({
       username,
     });
 
-    if (user.username === username) {
-      const orderedBook = await this.bookRepository.findOne(id);
+    if (user.username ?? false) {
+      const orderedBook = await this.bookRepository
+        .createQueryBuilder('book')
+        .leftJoinAndSelect('book.borrower', 'borrower')
+        .getOne();
 
-      if (orderedBook.borrower === user) {
+      if (orderedBook.borrower.id === user.id) {
         orderedBook.borrower = null;
       }
-      return await this.bookRepository.save(orderedBook);
+      await this.bookRepository.save(orderedBook);
+      return orderedBook.borrower;
     }
     return null;
   }
