@@ -20,6 +20,7 @@ export class User {
   @Column({
     type: 'varchar',
     length: 100,
+    unique: true,
   })
   username: string;
 
