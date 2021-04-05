@@ -157,13 +157,12 @@ export class BooksService {
     return null;
   }
 
-  async deleteBookById(id: number): Promise<boolean> {
+  async deleteBookById(id: number) {
     if (!this.isThereAnyBooks(id)) {
       return false;
     }
 
     await this.bookRepository.softDelete(id);
-    await this.bookRepository.restore(id);
 
     return true;
   }
