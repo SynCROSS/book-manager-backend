@@ -11,19 +11,16 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async getUserById(id: number): Promise<boolean | User> {
-    const user = (await this.userRepository.findOne(id)) ?? false;
-
-    return user;
+  async getUserById(id: number) {
+    return await this.userRepository.findOne(id).then(result => result);
   }
 
-  async getUserByUsername(username: string): Promise<boolean | User> {
-    const user =
-      (await this.userRepository.findOne({
+  async getUserByUsername(username: string) {
+    return await this.userRepository
+      .findOne({
         username,
-      })) ?? false;
-
-    return user;
+      })
+      .then(result => result);
   }
 
   async addUser(userDTO: UserDTO): Promise<User> {
