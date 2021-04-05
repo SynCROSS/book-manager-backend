@@ -1,9 +1,11 @@
+import { Permission } from './../entity/permission.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entity/user.entity';
-import { Repository } from 'typeorm';
+import { Repository, getRepository } from 'typeorm';
 import { UserDTO } from '../dto/user.dto';
 import { hashSync } from 'bcrypt';
+
 @Injectable()
 export class UsersService {
   constructor(
@@ -29,6 +31,10 @@ export class UsersService {
     const user = this.userRepository.create({
       ...userDTO,
       password: hash,
+    });
+
+    user.permission = await getRepository(Permission).findOne({
+      permission_group: 'normal',
     });
 
     return await this.userRepository.save(user);
