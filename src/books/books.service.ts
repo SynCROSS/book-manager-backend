@@ -80,12 +80,7 @@ export class BooksService {
 
   async isThereAnyBooks(id: number) {
     try {
-      return await this.getBookById(id).then(result => {
-        if (!(result ?? false)) {
-          return false;
-        }
-        return result;
-      });
+      return await this.getBookById(id).then(result => result);
     } catch (e) {
       console.error(e);
     }
@@ -134,7 +129,8 @@ export class BooksService {
   }
 
   async checkInBook(id: number, username: string) {
-    if (!this.isThereAnyBooks(id)) {
+    const borrowedBook = await this.isThereAnyBooks(id);
+    if (!borrowedBook) {
       return null;
     }
 
@@ -143,16 +139,20 @@ export class BooksService {
     });
 
     if (user.username ?? false) {
-      const orderedBook = await this.bookRepository
-        .createQueryBuilder('book')
-        .leftJoinAndSelect('book.borrower', 'borrower')
-        .getOne();
+      const orderedBooks = await this.bookRepository.find({
+        relations: ['permission'],
+      });
 
-      if (orderedBook.borrower.id === user.id) {
-        orderedBook.borrower = null;
+      for (const orderedBook of orderedBooks) {
+        if (
+          borrowedBook?.book_id === orderedBook?.book_id &&
+          orderedBook?.borrower.id === user.id
+        ) {
+          orderedBook.borrower = null;
+          await this.bookRepository.save(orderedBook);
+          return orderedBook.borrower;
+        }
       }
-      await this.bookRepository.save(orderedBook);
-      return orderedBook.borrower;
     }
     return null;
   }
