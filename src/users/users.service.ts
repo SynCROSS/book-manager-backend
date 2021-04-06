@@ -25,6 +25,21 @@ export class UsersService {
       .then(result => result);
   }
 
+  async getPermissionByUsername(username: string) {
+    const user = await this.userRepository.findOne({
+      username,
+    });
+
+    return await this.userRepository
+      .find({
+        relations: ['permission'],
+      })
+      .then(
+        result =>
+          result.find(r => r?.id === user?.id)?.permission?.permission_group,
+      );
+  }
+
   async addUser(userDTO: UserDTO): Promise<User> {
     const hash = hashSync(userDTO.password, 10);
 

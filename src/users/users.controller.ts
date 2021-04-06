@@ -11,6 +11,11 @@ export class UsersController {
     return this.userService.getUserByUsername(username);
   }
 
+  @Get('permission')
+  getPermission(@Query('username') username: string) {
+    return this.userService.getPermissionByUsername(username);
+  }
+
   @Get(':id')
   getUserById(@Param('id') id: number) {
     return this.userService.getUserById(id);
