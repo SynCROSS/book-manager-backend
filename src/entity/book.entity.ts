@@ -64,13 +64,12 @@ export class Book {
   language_original?: string;
 
   @Column({
-    type: 'varchar',
-    length: 100,
+    type: 'text',
   })
   cover!: string;
 
   @Column({
-    type: 'int',
+    type: 'bigint',
   })
   entry_stamp?: number;
 
