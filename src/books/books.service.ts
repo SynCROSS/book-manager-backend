@@ -70,11 +70,11 @@ export class BooksService {
     return books;
   }
 
-  async getBookById(id: number): Promise<Book> {
+  async getBookById(id: number) {
     const book = await this.bookRepository.findOne(id);
-    book.createdAt = undefined;
-    book.updatedAt = undefined;
-    book.deletedAt = undefined;
+    book?.createdAt ? undefined : null;
+    book?.updatedAt ? undefined : null;
+    book?.deletedAt ? undefined : null;
     return book;
   }
 
