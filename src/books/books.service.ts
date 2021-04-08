@@ -78,15 +78,12 @@ export class BooksService {
     return book;
   }
 
-  async isThereAnyBooks(id: number) {
-    try {
-      return await this.getBookById(id).then(result => result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
   async addBook(bookDTO: BookDTO) {
+    const res = await this.getBookById(bookDTO?.book_id);
+    if (res) {
+      return null;
+    }
+
     const book = this.bookRepository.create({
       ...bookDTO,
     });
@@ -95,7 +92,8 @@ export class BooksService {
   }
 
   async updateBookById(id: number, bookDTO: Partial<BookDTO>): Promise<Book> {
-    if (!this.isThereAnyBooks(id)) {
+    const res = await this.getBookById(id);
+    if (!res) {
       return null;
     }
 
@@ -106,7 +104,8 @@ export class BooksService {
 
   async checkOutBook(id: number, username: string) {
     try {
-      if (!this.isThereAnyBooks(id)) {
+      const res = await this.getBookById(id);
+      if (!res) {
         return null;
       }
 
@@ -129,7 +128,7 @@ export class BooksService {
   }
 
   async checkInBook(id: number, username: string) {
-    const borrowedBook = await this.isThereAnyBooks(id);
+    const borrowedBook = await this.getBookById(id);
     if (!borrowedBook) {
       return null;
     }
@@ -158,7 +157,8 @@ export class BooksService {
   }
 
   async deleteBookById(id: number) {
-    if (!this.isThereAnyBooks(id)) {
+    const res = await this.getBookById(id);
+    if (!res) {
       return false;
     }
 
