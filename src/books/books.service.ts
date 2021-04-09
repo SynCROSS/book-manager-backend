@@ -139,7 +139,7 @@ export class BooksService {
 
     if (user.username ?? false) {
       const orderedBooks = await this.bookRepository.find({
-        relations: ['permission'],
+        relations: ['borrower'],
       });
 
       for (const orderedBook of orderedBooks) {
